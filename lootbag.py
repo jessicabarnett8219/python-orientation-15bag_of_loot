@@ -120,8 +120,19 @@ class LootBag:
       except sqlite3.OperationalError as err:
         print("oops", err)
 
+  def lootHandler(self, query, second_arg, third_arg):
+    if query == "add":
+      self.addGift(second_arg, third_arg)
+    elif query == "delete":
+      self.deleteGift(second_arg, third_arg)
+    elif query == "deliver":
+      self.deliverGifts(second_arg)
 
-# if __name__ == "__main__":
+loot_bag = LootBag()
 
-#   # loot_bag = LootBag()
-#   # loot_bag.addGift("tug rope", "Amigo")
+if __name__ == "__main__":
+
+  loot_bag.lootHandler(sys.argv[1], sys.argv[2], sys.argv[3])
+
+
+
