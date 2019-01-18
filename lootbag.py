@@ -3,12 +3,16 @@ import sys
 
 lootbagdb = '/Users/jessicabarnett/workspace/back-end/python/exercises/bag_of_loot/lootbag.db'
 
+# Get all children in the database who are getting a gift
 def getChildren():
   with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
 
     for row in cursor.execute('''
-      SELECT * FROM Children
+      SELECT DISTINCT Children.ChildName
+      FROM Children
+      JOIN Gifts
+      WHERE Children.ChildId = Gifts.ChildId;
     '''
     ):
       print(row)
@@ -23,8 +27,7 @@ def getAllGifts():
     ):
       print(row)
 
-
-def addChild(child):
+def addChild(child_name):
   with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
 
@@ -33,12 +36,12 @@ def addChild(child):
         '''
         INSERT INTO Children
         VALUES (?, ?)
-        ''', (None, child["ChildName"])
+        ''', (None, child_name)
       )
     except sqlite3.OperationalError as err:
       print("oops", err)
 
-def getChildId(name):
+def getChildId(child_name):
   with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
 
@@ -47,7 +50,7 @@ def getChildId(name):
         f'''
         SELECT Children.ChildId
         FROM Children
-        WHERE Children.ChildName = '{name}';
+        WHERE Children.ChildName = '{child_name}';
         '''
       )
     except sqlite3.OperationalError as err:
@@ -60,7 +63,6 @@ def getChildId(name):
 
 def addGift(gift_name, child_name):
   child_id = getChildId(child_name)
-  print(child_id)
 
   with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
@@ -77,5 +79,6 @@ def addGift(gift_name, child_name):
 
 
 if __name__ == "__main__":
-  # getChildren()
-  getAllGifts()
+  # getAllGifts()
+  getChildren()
+  # addGift("Frisbee", "Nelson")
