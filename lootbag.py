@@ -1,19 +1,10 @@
 import sqlite3
 import sys
 
-lootbag_db = '/Users/jessicabarnett/workspace/back-end/python/exercises/bag_of_loot/lootbag.db'
-
-# def getSupers():
-#   with sqlite3.connect(super_db) as conn:
-#     cursor = conn.cursor()
-#     # a way for us to have a python-readable version of our db
-
-#     # Run SQL inside the parens
-#   for row in cursor.execute('SELECT * FROM Superhero'):
-#     print(row)
+lootbagdb = '/Users/jessicabarnett/workspace/back-end/python/exercises/bag_of_loot/lootbag.db'
 
 def getChildren():
-  with sqlite3.connect(lootbag_db) as conn:
+  with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
 
     for row in cursor.execute('''
@@ -22,6 +13,24 @@ def getChildren():
     ):
       print(row)
 
-if __name__ == "__main__":
+def addChild(child):
+  print("Add child called", child)
+  with sqlite3.connect(lootbagdb) as conn:
+    cursor = conn.cursor()
 
+    try:
+      cursor.execute(
+        '''
+        INSERT INTO Children
+        VALUES (?, ?)
+        ''', (None, child["ChildName"])
+      )
+    except sqlite3.OperationalError as err:
+      print("oops", err)
+
+
+if __name__ == "__main__":
+  addChild({
+    "ChildName": "Stephanie"
+  })
   getChildren()

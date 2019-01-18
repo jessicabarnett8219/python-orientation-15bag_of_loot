@@ -5,9 +5,7 @@ DROP TABLE IF EXISTS Gifts;
 
 CREATE TABLE `Children` (
     `ChildId`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `FirstName`    TEXT NOT NULL,
-    `LastName`    TEXT NOT NULL,
-    `IsBest` BIT NOT NULL
+    `ChildName`    TEXT NOT NULL
 );
 
 CREATE TABLE `Gifts` (
