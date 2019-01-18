@@ -17,17 +17,21 @@ def getChildren():
     ):
       print(row)
 
-def getAllGifts():
+# Lists all the gifts a child is getting
+def getChildGifts(child_name):
+  child_id = _getChildId(child_name)
   with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
 
-    for row in cursor.execute('''
-      SELECT * FROM Gifts
+    for row in cursor.execute(f'''
+      SELECT Gifts.GiftName
+      FROM Gifts
+      WHERE Gifts.ChildId = {child_id};
     '''
     ):
       print(row)
 
-def addChild(child_name):
+def _addChild(child_name):
   with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
 
@@ -41,28 +45,24 @@ def addChild(child_name):
     except sqlite3.OperationalError as err:
       print("oops", err)
 
-def getChildId(child_name):
+def _getChildId(child_name):
   with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
 
-    try:
-      cursor.execute(
-        f'''
-        SELECT Children.ChildId
-        FROM Children
-        WHERE Children.ChildName = '{child_name}';
-        '''
+    cursor.execute(
+      f'''
+      SELECT Children.ChildId
+      FROM Children
+      WHERE Children.ChildName = '{child_name}';
+      '''
       )
-    except sqlite3.OperationalError as err:
-      print("oops", err)
 
     child_id = cursor.fetchone()
-    print(child_id[0])
     return child_id[0]
 
 
 def addGift(gift_name, child_name):
-  child_id = getChildId(child_name)
+  child_id = _getChildId(child_name)
 
   with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
@@ -77,8 +77,42 @@ def addGift(gift_name, child_name):
     except sqlite3.OperationalError as err:
       print("oops", err)
 
+def deletGift(gift_name, child_name):
+  child_id = _getChildId(child_name)
+
+  with sqlite3.connect(lootbagdb) as conn:
+    cursor = conn.cursor()
+
+    try:
+      cursor.execute(
+        f'''
+        DELETE FROM Gifts
+        WHERE Gifts.ChildId = {child_id}
+        AND Gifts.GiftName = '{gift_name}';
+        '''
+      )
+    except sqlite3.OperationalError as err:
+      print("oops", err)
+
+def deliverGifts(child_name):
+  child_id = _getChildId(child_name)
+  with sqlite3.connect(lootbagdb) as conn:
+    cursor = conn.cursor()
+
+    try:
+      cursor.execute(
+        f'''
+        UPDATE Gifts
+        SET Delivered = 1
+        WHERE Gifts.ChildId = {child_id};
+        '''
+      )
+    except sqlite3.OperationalError as err:
+      print("oops", err)
+
+
+
+
 
 if __name__ == "__main__":
-  # getAllGifts()
-  getChildren()
-  # addGift("Frisbee", "Nelson")
+  deliverGifts("Sarah")
