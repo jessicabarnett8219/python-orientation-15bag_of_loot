@@ -13,8 +13,18 @@ def getChildren():
     ):
       print(row)
 
+def getAllGifts():
+  with sqlite3.connect(lootbagdb) as conn:
+    cursor = conn.cursor()
+
+    for row in cursor.execute('''
+      SELECT * FROM Gifts
+    '''
+    ):
+      print(row)
+
+
 def addChild(child):
-  print("Add child called", child)
   with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
 
@@ -28,9 +38,50 @@ def addChild(child):
     except sqlite3.OperationalError as err:
       print("oops", err)
 
+def getChildId(name):
+  with sqlite3.connect(lootbagdb) as conn:
+    cursor = conn.cursor()
+
+    try:
+      cursor.execute(
+        f'''
+        SELECT Children.ChildId
+        FROM Children
+        WHERE Children.ChildName = '{name}';
+        '''
+      )
+    except sqlite3.OperationalError as err:
+      print("oops", err)
+
+    child_id = cursor.fetchone()
+    print(child_id)
+    return child_id
+
+
+def addGift(gift):
+  print("Add gift called", gift)
+  with sqlite3.connect(lootbagdb) as conn:
+    cursor = conn.cursor()
+
+    try:
+      cursor.execute(
+        '''
+        INSERT INTO Gifts
+        VALUES (?, ?, ?, ?)
+        ''', (None, gift["GiftName"], gift["Delivered"], gift["ChildId"])
+      )
+    except sqlite3.OperationalError as err:
+      print("oops", err)
+
+
+
 
 if __name__ == "__main__":
-  addChild({
-    "ChildName": "Stephanie"
-  })
-  getChildren()
+  # addGift({
+  #   "GiftName": "Dinosaur",
+  #   "Delivered": 0,
+  #   "ChildId": 1
+  # })
+  # getChildren()
+  # getAllGifts()
+  getChildId("Wally")
