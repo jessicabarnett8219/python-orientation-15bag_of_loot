@@ -54,12 +54,14 @@ def getChildId(name):
       print("oops", err)
 
     child_id = cursor.fetchone()
-    print(child_id)
-    return child_id
+    print(child_id[0])
+    return child_id[0]
 
 
-def addGift(gift):
-  print("Add gift called", gift)
+def addGift(gift_name, child_name):
+  child_id = getChildId(child_name)
+  print(child_id)
+
   with sqlite3.connect(lootbagdb) as conn:
     cursor = conn.cursor()
 
@@ -68,20 +70,12 @@ def addGift(gift):
         '''
         INSERT INTO Gifts
         VALUES (?, ?, ?, ?)
-        ''', (None, gift["GiftName"], gift["Delivered"], gift["ChildId"])
+        ''', (None, gift_name, 0, child_id)
       )
     except sqlite3.OperationalError as err:
       print("oops", err)
 
 
-
-
 if __name__ == "__main__":
-  # addGift({
-  #   "GiftName": "Dinosaur",
-  #   "Delivered": 0,
-  #   "ChildId": 1
-  # })
   # getChildren()
-  # getAllGifts()
-  getChildId("Wally")
+  getAllGifts()
